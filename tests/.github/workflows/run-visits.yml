@@ -1,1 +1,27 @@
+name: Distributed lab visits
+
+on:
+  workflow_dispatch:
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        run: [1,2,3,4,5]    # cambia el array para más/menos jobs; 5 es un buen inicio
+    env:
+      RUN_ID: ${{ github.run_id }}-${{ matrix.run }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: python -m pip install --upgrade pip requests
+
+      - name: Run test script
+        run: python tests/request_client.py "${{ secrets.TARGET_URL }}" "${{ env.RUN_ID }}"
 
